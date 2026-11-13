@@ -1,9 +1,8 @@
-# Day 1
+# Day 3
 
-## Lab 1
-Packet Tracer - Configure Trunks
+## Packet Tracer - Configuring VLANs
 
-![Packet Tracer - Configure Trunks](https://itexamanswers.net/wp-content/uploads/2020/02/3.4.5-Packet-Tracer-Configure-Trunks.jpg)
+![Packet Tracer - Configuring VLANs](https://itexamanswers.net/wp-content/uploads/2020/02/3.4.5-Packet-Tracer-Configure-Trunks.jpg)
 
 ### Objectives
 
@@ -14,9 +13,22 @@ Packet Tracer - Configure Trunks
 
 ### SWITCH S1
 ``` bash
+! ==============================================================
+
 enable
-conf t
-!
+configure terminal
+
+! --------------------------------------------------------------
+!--- Part 2, Step 1: Create and name VLANs on S1.
+! --------------------------------------------------------------
+
+!--- Create the following VLANs. Names are case-sensitive:
+
+!--- VLAN 10: Faculty/Staff
+!--- VLAN 20: Students
+!--- VLAN 30: Guest(Default)
+!--- VLAN 99: Management&Native
+
 VLAN 10
  name Faculty/Staff
 
@@ -30,13 +42,25 @@ VLAN 99
  name Management&Native
  exit
 
+! --------------------------------------------------------------
+!--- Save the configuration to NVRAM. (Press Enter when prompted for the destination filename.)
+! --------------------------------------------------------------
+copy running-config startup-config
+
+
+! ==============================================================
 ```
 
 ### SWITCH S2
 ``` bash
+! ==============================================================
 enable
 conf t
-!
+
+! --------------------------------------------------------------
+!--- Part 2, Step 3: Create the VLANs on S2 and S3.
+! --------------------------------------------------------------
+
 VLAN 10
  name Faculty/Staff
 
@@ -50,29 +74,40 @@ VLAN 99
  name Management&Native
  exit
 
-!
+! --------------------------------------------------------------
+!--- Part 3, Step 1: Assign VLANs to the active ports on S2.
+! --------------------------------------------------------------
+
+! --- VLAN 10: Fast Ethernet 0/11
 interface FastEthernet0/6
  switchport access vlan 30
  switchport mode access
-!
+
+! --- VLAN 20: Fast Ethernet 0/18
 interface FastEthernet0/11
  switchport access vlan 10
  switchport trunk native vlan 99
  switchport mode access
-!
+
+! --- VLAN 30: Fast Ethernet 0/6
 interface FastEthernet0/18
  switchport access vlan 20
  switchport mode access
 !
 end
-
+! ==============================================================
 ```
 
 ### SWITCH S3
 ``` bash
+! ==============================================================
 enable
 conf t
-!
+
+! --------------------------------------------------------------
+!--- Part 2, Step 3: Create the VLANs on S2 and S3.
+! --------------------------------------------------------------
+
 VLAN 10
  name Faculty/Staff
 
@@ -86,21 +121,28 @@ VLAN 99
  name Management&Native
  exit
 
-!
+! --------------------------------------------------------------
+!--- Part 3, Step 2: Assign VLANs to the active ports on S3.
+! --------------------------------------------------------------
+
+! --- VLAN 10: Fast Ethernet 0/11
 interface FastEthernet0/6
  switchport access vlan 30
  switchport mode access
-!
+
+! --- VLAN 20: Fast Ethernet 0/18
 interface FastEthernet0/11
  switchport access vlan 10
  switchport trunk native vlan 99
  switchport mode access
-!
+
+! --- VLAN 30: Fast Ethernet 0/6
 interface FastEthernet0/18
  switchport access vlan 20
  switchport mode access
 !
 end
+! ==============================================================
 ```
 
 ## Lab 2

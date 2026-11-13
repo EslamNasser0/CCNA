@@ -1,7 +1,6 @@
 # Day 1
 
-## Lab 1
-Packet Tracer - Configure Initial Switch Settings
+## Packet Tracer - Configure Initial Switch Settings
 
 ![Packet Tracer - Configure Initial Switch Settings](https://itexamanswers.net/wp-content/uploads/2016/10/2020-10-26_212415.jpg)
 
@@ -120,9 +119,7 @@ copy running-config startup-config
 ! ==============================================================
 ```
 
-## Lab 2
-
-Packet Tracer - Implement Basic Connectivity
+## Packet Tracer - Implement Basic Connectivity
 
 ![Packet Tracer - Configure Initial Switch Settings](https://itexamanswers.net/wp-content/uploads/2016/10/2.7.6-Packet-Tracer-Implement-Basic-Connectivity.jpg)
 

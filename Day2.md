@@ -1,7 +1,6 @@
 # Day 2
 
-## Lab 1
-Packet Tracer - Configure SSH
+## Packet Tracer - Configure SSH
 
 ![Packet Tracer - Configure SSH](https://itexamanswers.net/wp-content/uploads/2020/02/1.3.6-Packet-Tracer-Configure-SSH.jpg)
 
@@ -76,9 +75,7 @@ copy running-config startup-config
 ! ==============================================================
 ```
 
-## Lab 2
-
-Packet Tracer - Switch Basic Config-Challenge Lab
+## Packet Tracer - Switch Basic Config-Challenge Lab
 
 ![Packet Tracer - Switch Basic Config-Challenge Lab](https://itexamanswers.net/wp-content/uploads/2026/08/Topo-1.png)
 
