@@ -1,0 +1,251 @@
+# Day 1
+
+## Lab 1
+Packet Tracer - Configure Initial Switch Settings
+
+![Packet Tracer - Configure Initial Switch Settings](https://itexamanswers.net/wp-content/uploads/2016/10/2020-10-26_212415.jpg)
+
+### Objectives
+
+ - Part 1: Verify the Default Switch Configuration
+ - Part 2: Create a Basic Switch Configuration
+ - Part 3: Configure a MOTD Banner
+ - Part 4: Save Configuration Files to NVRAM
+ - Part 5: Configure S2
+
+
+### SWITCH S1
+``` bash
+! ==============================================================
+!--- Usage: copy this whole file and paste it into the S1 terminal (start at the Switch> prompt). Every line beginning with "!" is a comment; IOS ignores it, so pasting a comment by accident is harmless.
+! ==============================================================
+
+enable
+configure terminal
+
+! --------------------------------------------------------------
+!--- Part 2: Create a Basic Switch Configuration.
+! --------------------------------------------------------------
+
+!--- Assign a name to the switch.
+hostname S1
+
+!--- Secure the console line with the password "letmein" and require login.
+line console 0
+ password letmein
+ login
+ exit
+
+!--- Secure privileged mode with the enable password "c1$c0".
+enable password c1$c0
+
+!--- Replace it with the stronger encrypted "enable secret" password "itsasecret" (the secret overrides the enable password).
+enable secret itsasecret
+
+!--- Encrypt the enable and console plaintext passwords.
+service password-encryption
+
+! --------------------------------------------------------------
+!--- Part 3: Configure a MOTD Banner.
+! --------------------------------------------------------------
+
+!--- Configure a message-of-the-day banner to warn that unauthorized access is prohibited.
+banner motd "This is a secure system. Authorized Access Only!"
+
+end
+
+! --------------------------------------------------------------
+!--- Part 4: Save the configuration to NVRAM. (Press Enter when prompted for the destination filename.)
+! --------------------------------------------------------------
+copy running-config startup-config
+
+
+! ==============================================================
+!--- Verification:
+!---   show running-config  -> confirm hostname, passwords, banner
+!---   show startup-config  -> confirm the config was saved to NVRAM
+!--- Note: the enable password c1$c0 only grades as correct once
+!--- service password-encryption has encrypted it (Part 2, Step 8).
+! ==============================================================
+```
+
+### SWITCH S1
+``` bash
+! ==============================================================
+!--- Usage: copy this whole file and paste it into the S2 terminal (start at the Switch> prompt). Every line beginning with "!" is a comment; IOS ignores it, so pasting a comment by accident is harmless.
+! ==============================================================
+
+enable
+configure terminal
+
+! --------------------------------------------------------------
+!--- Part 5: Configure S2.
+! --------------------------------------------------------------
+
+!--- a. Name the device S2.
+hostname S2
+
+!--- b. Protect access to the console using the letmein password.
+line console 0
+ password letmein
+ login
+ exit
+
+!--- c. Configure an enable password of c1$c0.
+enable password c1$c0
+
+!--- c. Configure an enable secret password of itsasecret.
+enable secret itsasecret
+
+!--- d. Configure a message to those logging into the switch.
+banner motd "Authorized access only. Unauthorized access is prohibited and violators will be prosecuted to the full extent of the law."
+
+!--- e. Encrypt all plain text passwords.
+service password-encryption
+
+end
+
+! --------------------------------------------------------------
+!--- g. Save the configuration to NVRAM. (Press Enter when prompted for the destination filename.)
+! --------------------------------------------------------------
+copy running-config startup-config
+
+
+! ==============================================================
+!--- Verification:
+!---   show running-config  -> f. confirm hostname, encrypted passwords and banner
+!---   show startup-config  -> confirm the config was saved to NVRAM
+!--- Note: Part 5 uses a different banner from S1. Reusing the S1 text
+!--- ("This is a secure system...") makes the S2 banner item fail grading.
+! ==============================================================
+```
+
+## Lab 2
+
+Packet Tracer - Implement Basic Connectivity
+
+![Packet Tracer - Configure Initial Switch Settings](https://itexamanswers.net/wp-content/uploads/2016/10/2.7.6-Packet-Tracer-Implement-Basic-Connectivity.jpg)
+
+### Objectives
+
+ - Part 1: Perform a Basic Configuration on S1 and S2
+ - Part 2: Configure the PCs
+ - Part 3: Configure the Switch Management Interface
+
+### SWITCH S1
+``` bash
+! ==============================================================
+!--- Usage: copy this whole file and paste it into the S1 terminal (start at the Switch> prompt). Every line beginning with "!" is a comment; IOS ignores it, so pasting a comment by accident is harmless.
+! ==============================================================
+
+enable
+configure terminal
+
+! --------------------------------------------------------------
+!--- Part 1: Perform a Basic Configuration on S1 and S2.
+! --------------------------------------------------------------
+
+!--- Configure the hostname.
+hostname S1
+
+!--- Secure the console line with the password "cisco" and require login.
+line console 0
+ password cisco
+ login
+ exit
+
+!--- Set the encrypted privileged EXEC password (enable secret) to "class".
+enable secret class
+
+!--- Configure a MOTD banner to warn against unauthorized access.
+banner motd $Authorized access only. Violators will be prosecuted to the full extent of the law.$
+
+! --------------------------------------------------------------
+!--- Part 3: Configure the Switch Management Interface.
+! --------------------------------------------------------------
+
+!--- Configure the VLAN 1 management interface with its IP address from the Addressing Table and activate it.
+interface vlan 1
+ ip address 192.168.1.253 255.255.255.0
+ no shutdown
+ exit
+
+end
+
+! --------------------------------------------------------------
+!--- Save the configuration to NVRAM. (Press Enter when prompted for the destination filename.)
+! --------------------------------------------------------------
+copy running-config startup-config
+
+
+! ==============================================================
+!--- Verification:
+!---   show ip interface brief  -> VLAN 1 up/up with its IP address
+!---   show running-config      -> hostname, passwords, banner
+!---   ping 192.168.1.254       -> reach the other switch
+!---   ping 192.168.1.1         -> reach PC1
+!---   ping 192.168.1.2         -> reach PC2
+!--- Note: the first ping may show 80%; retry and it should reach 100%
+!--- (the first packet is lost while ARP resolves the MAC address).
+! ==============================================================
+```
+
+### SWITCH S1
+``` bash
+! ==============================================================
+!--- 2.7.6 Packet Tracer - Implement Basic Connectivity
+!--- ANSWER SCRIPT FOR SWITCH S2
+!--- Usage: copy this whole file and paste it into the S2 terminal (start at the Switch> prompt). Every line beginning with "!" is a comment; IOS ignores it, so pasting a comment by accident is harmless.
+! ==============================================================
+
+enable
+configure terminal
+
+! --------------------------------------------------------------
+!--- Part 1: Perform a Basic Configuration on S1 and S2.
+! --------------------------------------------------------------
+
+!--- Configure the hostname.
+hostname S2
+
+!--- Secure the console line with the password "cisco" and require login.
+line console 0
+ password cisco
+ login
+ exit
+
+!--- Set the encrypted privileged EXEC password (enable secret) to "class".
+enable secret class
+
+!--- Configure a MOTD banner to warn against unauthorized access.
+banner motd $Authorized access only. Violators will be prosecuted to the full extent of the law.$
+
+! --------------------------------------------------------------
+!--- Part 3: Configure the Switch Management Interface.
+! --------------------------------------------------------------
+
+!--- Configure the VLAN 1 management interface with its IP address from the Addressing Table and activate it.
+interface vlan 1
+ ip address 192.168.1.254 255.255.255.0
+ no shutdown
+ exit
+
+end
+
+! --------------------------------------------------------------
+!--- Save the configuration to NVRAM. (Press Enter when prompted for the destination filename.)
+! --------------------------------------------------------------
+copy running-config startup-config
+
+
+! ==============================================================
+!--- Verification:
+!---   show ip interface brief  -> VLAN 1 up/up with its IP address
+!---   show running-config      -> hostname, passwords, banner
+!---   ping 192.168.1.253       -> reach the other switch
+!---   ping 192.168.1.1         -> reach PC1
+!---   ping 192.168.1.2         -> reach PC2
+!--- Note: the first ping may show 80%; retry and it should reach 100%
+!--- (the first packet is lost while ARP resolves the MAC address).
+! ==============================================================
+```
