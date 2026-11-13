@@ -145,54 +145,33 @@ end
 ! ==============================================================
 ```
 
-## Lab 2
+## Packet Tracer - Configure Trunks
 
-Packet Tracer - Implement Basic Connectivity
-
-![Packet Tracer - Configure Initial Switch Settings](https://itexamanswers.net/wp-content/uploads/2016/10/2.7.6-Packet-Tracer-Implement-Basic-Connectivity.jpg)
+![Packet Tracer - Configure Trunks](https://itexamanswers.net/wp-content/uploads/2020/02/3.4.5-Packet-Tracer-Configure-Trunks.jpg)
 
 ### Objectives
 
- - Part 1: Perform a Basic Configuration on S1 and S2
- - Part 2: Configure the PCs
- - Part 3: Configure the Switch Management Interface
+ - Part 1: Verify VLANs
+ - Part 2: Configure Trunks
 
 ### SWITCH S1
 ``` bash
 ! ==============================================================
-!--- Usage: copy this whole file and paste it into the S1 terminal (start at the Switch> prompt). Every line beginning with "!" is a comment; IOS ignores it, so pasting a comment by accident is harmless.
+!--- The VLANs and the access ports on S2/S3 are preconfigured; this lab only configures the trunk links.
 ! ==============================================================
 
 enable
 configure terminal
 
 ! --------------------------------------------------------------
-!--- Part 1: Perform a Basic Configuration on S1 and S2.
+!--- Part 2, Step 1: Configure trunking on S1 and use VLAN 99 as the native VLAN.
 ! --------------------------------------------------------------
 
-!--- Configure the hostname.
-hostname S1
-
-!--- Secure the console line with the password "cisco" and require login.
-line console 0
- password cisco
- login
- exit
-
-!--- Set the encrypted privileged EXEC password (enable secret) to "class".
-enable secret class
-
-!--- Configure a MOTD banner to warn against unauthorized access.
-banner motd $Authorized access only. Violators will be prosecuted to the full extent of the law.$
-
-! --------------------------------------------------------------
-!--- Part 3: Configure the Switch Management Interface.
-! --------------------------------------------------------------
-
-!--- Configure the VLAN 1 management interface with its IP address from the Addressing Table and activate it.
-interface vlan 1
- ip address 192.168.1.253 255.255.255.0
- no shutdown
+!--- a. Configure G0/1 (to S2) and G0/2 (to S3) for trunking.
+!--- b. Configure VLAN 99 as the native VLAN on both trunks. CDP reports a native VLAN mismatch until S2 and S3 are also set to VLAN 99.
+interface range gigabitethernet 0/1 - 2
+ switchport mode trunk
+ switchport trunk native vlan 99
  exit
 
 end
@@ -205,54 +184,28 @@ copy running-config startup-config
 
 ! ==============================================================
 !--- Verification:
-!---   show ip interface brief  -> VLAN 1 up/up with its IP address
-!---   show running-config      -> hostname, passwords, banner
-!---   ping 192.168.1.254       -> reach the other switch
-!---   ping 192.168.1.1         -> reach PC1
-!---   ping 192.168.1.2         -> reach PC2
-!--- Note: the first ping may show 80%; retry and it should reach 100%
-!--- (the first packet is lost while ARP resolves the MAC address).
+!---   show interfaces trunk  -> Gig0/1 and Gig0/2 trunking, native VLAN 99
+!---   From PC1, ping 172.17.10.24 (PC4) -> success across the trunks
 ! ==============================================================
 ```
 
 ### SWITCH S2
 ``` bash
 ! ==============================================================
-!--- 2.7.6 Packet Tracer - Implement Basic Connectivity
-!--- ANSWER SCRIPT FOR SWITCH S2
-!--- Usage: copy this whole file and paste it into the S2 terminal (start at the Switch> prompt). Every line beginning with "!" is a comment; IOS ignores it, so pasting a comment by accident is harmless.
+!--- S2 connects to S1 on G0/1 only.
 ! ==============================================================
 
 enable
 configure terminal
 
 ! --------------------------------------------------------------
-!--- Part 1: Perform a Basic Configuration on S1 and S2.
+!--- Part 2, Step 3: Correct the native VLAN mismatch on S2 and S3.
 ! --------------------------------------------------------------
 
-!--- Configure the hostname.
-hostname S2
-
-!--- Secure the console line with the password "cisco" and require login.
-line console 0
- password cisco
- login
- exit
-
-!--- Set the encrypted privileged EXEC password (enable secret) to "class".
-enable secret class
-
-!--- Configure a MOTD banner to warn against unauthorized access.
-banner motd $Authorized access only. Violators will be prosecuted to the full extent of the law.$
-
-! --------------------------------------------------------------
-!--- Part 3: Configure the Switch Management Interface.
-! --------------------------------------------------------------
-
-!--- Configure the VLAN 1 management interface with its IP address from the Addressing Table and activate it.
-interface vlan 1
- ip address 192.168.1.254 255.255.255.0
- no shutdown
+!--- a. Make G0/1 a static trunk (Step 4 expects "Administrative Mode: trunk") and set the native VLAN to 99 to match S1.
+interface gigabitethernet 0/1
+ switchport mode trunk
+ switchport trunk native vlan 99
  exit
 
 end
@@ -265,12 +218,43 @@ copy running-config startup-config
 
 ! ==============================================================
 !--- Verification:
-!---   show ip interface brief  -> VLAN 1 up/up with its IP address
-!---   show running-config      -> hostname, passwords, banner
-!---   ping 192.168.1.253       -> reach the other switch
-!---   ping 192.168.1.1         -> reach PC1
-!---   ping 192.168.1.2         -> reach PC2
-!--- Note: the first ping may show 80%; retry and it should reach 100%
-!--- (the first packet is lost while ARP resolves the MAC address).
+!---   show interfaces trunk                             -> Gig0/1 trunking, native VLAN 99, VLANs 1,10,20,30,88,99 active
+!---   show interfaces gigabitethernet 0/1 switchport  -> Administrative Mode: trunk, Native VLAN 99
+!---   show vlan                                         -> Gig0/1 no longer listed (trunk ports are not shown)
+! ==============================================================
+```
+
+### SWITCH S3
+``` bash
+! ==============================================================
+!--- S3 connects to S1 on G0/2 only.
+! ==============================================================
+
+enable
+configure terminal
+
+! --------------------------------------------------------------
+!--- Part 2, Step 3: Correct the native VLAN mismatch on S2 and S3.
+! --------------------------------------------------------------
+
+!--- a. Make G0/2 a static trunk (Step 4 expects "Administrative Mode: trunk") and set the native VLAN to 99 to match S1.
+interface gigabitethernet 0/2
+ switchport mode trunk
+ switchport trunk native vlan 99
+ exit
+
+end
+
+! --------------------------------------------------------------
+!--- Save the configuration to NVRAM. (Press Enter when prompted for the destination filename.)
+! --------------------------------------------------------------
+copy running-config startup-config
+
+
+! ==============================================================
+!--- Verification:
+!---   show interfaces trunk                             -> Gig0/2 trunking, native VLAN 99, VLANs 1,10,20,30,88,99 active
+!---   show interfaces gigabitethernet 0/2 switchport  -> Administrative Mode: trunk, Native VLAN 99
+!---   show vlan                                         -> Gig0/2 no longer listed (trunk ports are not shown)
 ! ==============================================================
 ```
