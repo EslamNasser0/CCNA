@@ -69,7 +69,7 @@ copy running-config startup-config
 ! ==============================================================
 ```
 
-### SWITCH S1
+### SWITCH S2
 ``` bash
 ! ==============================================================
 !--- Usage: copy this whole file and paste it into the S2 terminal (start at the Switch> prompt). Every line beginning with "!" is a comment; IOS ignores it, so pasting a comment by accident is harmless.
@@ -190,7 +190,7 @@ copy running-config startup-config
 ! ==============================================================
 ```
 
-### SWITCH S1
+### SWITCH S2
 ``` bash
 ! ==============================================================
 !--- 2.7.6 Packet Tracer - Implement Basic Connectivity
