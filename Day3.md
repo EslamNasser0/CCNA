@@ -150,7 +150,6 @@ end
 ![Packet Tracer - Configure Trunks](https://itexamanswers.net/wp-content/uploads/2020/02/3.4.5-Packet-Tracer-Configure-Trunks.jpg)
 
 ### Objectives
-
  - Part 1: Verify VLANs
  - Part 2: Configure Trunks
 
