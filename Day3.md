@@ -257,3 +257,164 @@ copy running-config startup-config
 !---   show vlan                                         -> Gig0/2 no longer listed (trunk ports are not shown)
 ! ==============================================================
 ```
+
+## Lab -Configuring VLANs and Trunking
+
+![Lab -Configuring VLANs and Trunking](https://images4.imgbox.com/d4/86/KOkicpKC_o.png)
+
+### Objectives
+
+ - Part 1: Build the Network and Configure Basic Device Settings
+ - Part 2: Create VLANs and Assign Switch Ports
+
+### S1
+``` bash
+enable
+config t
+
+! Set the hostname of the switch
+hostname S1
+
+! Disable DNS lookup to prevent the switch from freezing on typos
+no ip domain-lookup
+
+! Set the privileged EXEC mode password
+enable secret class
+
+! Configure physical console line security
+line console 0
+ password cisco
+ login
+ exit
+
+! Configure remote VTY (Telnet/SSH) line security
+line vty 0 15
+ password cisco
+ login
+ exit
+
+! Encrypt all plaintext passwords in the configuration file
+service password-encryption
+
+! Configure a login warning banner
+banner motd  $ Waring Message! $
+
+! ============= VLAN Definitions =============
+vlan 10
+ name Student
+vlan 99
+ name Management
+ exit
+
+! ============= Management SVI =============
+! Assign an IP address to VLAN 99 so the switch can respond to pings / be managed
+interface vlan 99
+ ip address 192.168.99.1 255.255.255.0
+ no shutdown
+ exit
+
+! ============= Port Configurations =============
+! Trunk port connecting to S2 (allows Student VLAN)
+interface f0/1
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10
+ exit
+
+! Access port connecting to PC-A (placed in Student VLAN 10)
+interface f0/6
+ switchport mode access
+ switchport access vlan 10
+ exit
+
+end
+wr
+```
+
+### S2
+``` bash
+enable
+config t
+
+! Set the hostname of the switch
+hostname S2
+
+! Disable DNS lookup
+no ip domain-lookup
+
+! Set the privileged EXEC mode password
+enable secret class
+
+! Configure physical console line security
+line console 0
+ password cisco
+ login
+ exit
+
+! Configure remote VTY line security
+line vty 0 15
+ password cisco
+ login
+ exit
+
+! Encrypt all plaintext passwords
+service password-encryption
+
+! Configure a login warning banner
+banner motd  $ Waring Message! $
+
+! ============= VLAN Definitions =============
+vlan 10
+ name Student
+vlan 20
+ name Faculty
+vlan 99
+ name Management
+ exit
+
+! ============= Management SVI =============
+! Assign an IP address to VLAN 99 for management connectivity
+interface vlan 99
+ ip address 192.168.99.2 255.255.255.0
+ no shutdown
+ exit
+
+! ============= Port Configurations =============
+! Access port connecting to PC1 (Student VLAN 10)
+interface f0/11
+ switchport mode access
+ switchport access vlan 10
+ exit
+
+! Access port connecting to PC2 (Faculty VLAN 20)
+interface f0/18
+ switchport mode access
+ switchport access vlan 20
+ exit
+
+! Trunk port connecting to S1
+interface f0/1
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10
+ exit
+
+end
+wr
+```
+
+### PC-A
+``` bash
+ipconfig 192.168.10.3 255.255.255.0 192.168.10.1
+```
+
+### PC-B
+``` bash
+ipconfig 192.168.10.4 255.255.255.0 192.168.10.1
+```
+
+### PC-C
+``` bash
+ipconfig 192.168.20.3 255.255.255.0 192.168.20.1
+```
+
